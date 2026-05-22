@@ -49,17 +49,29 @@ const Checkout = () => {
 
       const data = await res.json();
 
-      if (data[0].Status === "Success") {
+      if (data[0]?.Status === "Success" && data[0]?.PostOffice?.length > 0) {
         const postOffice = data[0].PostOffice[0];
 
         setForm((prev) => ({
           ...prev,
-          city: postOffice.District,
-          state: postOffice.State,
+          city: postOffice.District || "",
+          state: postOffice.State || "",
+        }));
+      } else {
+        setForm((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
         }));
       }
     } catch (err) {
-      console.log("Pincode fetch failed");
+      console.log(err);
+
+      setForm((prev) => ({
+        ...prev,
+        city: "",
+        state: "",
+      }));
     }
   };
 
@@ -87,7 +99,7 @@ ${index + 1}. ${item.title}
       paymentMethod === "partial" ? payableNow * 100 : totalFinalPrice * 100;
 
     const options = {
-      key: import.meta.env.VITE_RZP_LIVE_KEY_ID,
+      key: import.meta.env.VITE_RZP_TEST_KEY_ID,
 
       amount: paymentAmount,
 
@@ -257,11 +269,20 @@ ${response.razorpay_payment_id}
             />
 
             <input
+              type="text"
               name="pincode"
+              value={form.pincode}
+              maxLength={6}
               placeholder="Pincode"
               onChange={(e) => {
-                handleChange(e);
-                fetchPincodeData(e.target.value);
+                const value = e.target.value.replace(/\D/g, "");
+
+                setForm((prev) => ({
+                  ...prev,
+                  pincode: value,
+                }));
+
+                fetchPincodeData(value);
               }}
               className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
             />
@@ -354,7 +375,7 @@ ${response.razorpay_payment_id}
                 className="flex items-center gap-4 bg-cream/10 rounded-xl p-3"
               >
                 <img
-                  src={item.image}
+                  src={item.images?.[0]}
                   alt={item.title}
                   className="w-20 rounded-lg object-cover"
                 />

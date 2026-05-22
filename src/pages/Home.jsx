@@ -4,18 +4,19 @@ import { motion } from "framer-motion";
 import { Swiper } from "swiper/react";
 import { SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-
 import "swiper/css";
+import "swiper/css/pagination";
 
 const products = [
   {
-    title: "Mai Bhi Cockroach",
-    price: 495,
-    ogPrice: 1195,
-    image: "/Tee.png",
+    title: "Cockroach Gang Tee",
+    price: 499,
+    ogPrice: 1199,
+    images: ["/TeeFront.webp", "/TeeBack.webp"],
   },
 ];
 
@@ -32,7 +33,7 @@ const Home = () => {
   const cartTitles = cart.map((item) => item.title);
 
   const [selectedSizes, setSelectedSizes] = useState({
-    "Mai Bhi Cockroach": "M",
+    "Cockroach Gang Tee": "M",
   });
   const [addedProducts, setAddedProducts] = useState([]);
 
@@ -78,13 +79,20 @@ const Home = () => {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <button className="bg-brown text-cream px-6 py-3 rounded-full font-semibold hover:scale-105 transition-all">
+              <a
+                href="#collection"
+                className="bg-brown text-cream p-4 px-8 rounded-full font-semibold hover:scale-105 transition-all"
+              >
                 Shop Collection
-              </button>
+              </a>
 
-              <button className="border-2 border-brown px-6 py-3 rounded-full font-semibold hover:bg-brown hover:text-cream transition-all">
+              <a
+                href="https://cockroachjantaparty.org/"
+                target="_blank"
+                className="border-2 border-brown p-4 px-8 rounded-full font-semibold hover:bg-brown hover:text-cream transition-all"
+              >
                 Join CJP Community
-              </button>
+              </a>
             </div>
 
             <div className="flex flex-wrap gap-8 pt-4">
@@ -136,9 +144,9 @@ const Home = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl font-black">₹495</span>
+                  <span className="text-3xl font-black">₹499</span>
 
-                  <span className="line-through opacity-50 text-lg">₹1499</span>
+                  <span className="line-through opacity-50 text-lg">₹1199</span>
                 </div>
 
                 <button className="bg-orange text-cream rounded-xl p-4 font-semibold text-lg hover:scale-[1.02] transition-all duration-300">
@@ -163,7 +171,10 @@ const Home = () => {
       {/* Featured Products */}
       {/* ========================= */}
 
-      <section className="p-8 px-4 xl:px-16 xl:p-12 flex flex-col gap-12">
+      <section
+        id="collection"
+        className="p-8 px-4 xl:px-16 xl:p-12 flex flex-col gap-12"
+      >
         <div className="flex items-end justify-between">
           <div className="font-['Englebert'] leading-none">
             <h2 className="text-5xl xl:text-6xl font-black">Featured</h2>
@@ -187,13 +198,34 @@ const Home = () => {
               key={index}
               className="bg-brown text-cream rounded-2xl p-4 flex flex-col gap-4"
             >
-              <img
-                src={product.image}
-                alt={product.title}
-                className="rounded-lg object-cover"
-              />
+              <div className="w-full h-[420px]">
+                <Swiper
+                  modules={[Autoplay]}
+                  slidesPerView={1}
+                  spaceBetween={16}
+                  loop={true}
+                  autoplay={{
+                    delay: 2500,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                  }}
+                  onTouchStart={(swiper) => swiper.autoplay.stop()}
+                  onTouchEnd={(swiper) => swiper.autoplay.start()}
+                  className="rounded-lg overflow-hidden h-full"
+                >
+                  {product.images.map((img, i) => (
+                    <SwiperSlide key={i}>
+                      <img
+                        src={img}
+                        alt={`${product.title}-${i}`}
+                        className="w-full h-full rounded-lg object-cover"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
 
-              <div className="pt-6 flex flex-col gap-4">
+              <div className="flex flex-col gap-4">
                 <h4 className="text-4xl font-['Englebert'] font-black">
                   {product.title}
                 </h4>
@@ -319,7 +351,7 @@ const Home = () => {
             </p>
 
             <a
-              href="https://cockroachjantaparty.org/"
+              href="https://instagram.com/cockroachjantaparty/"
               target="_blank"
               className="w-fit bg-orange text-cream p-4 px-8 rounded-full font-semibold hover:scale-105 transition-all duration-200"
             >

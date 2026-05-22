@@ -50,7 +50,7 @@ const Cart = () => {
                 className="bg-brown text-cream rounded-2xl p-4 flex flex-col xl:flex-row gap-6"
               >
                 <img
-                  src={item.image}
+                  src={item.images?.[0]}
                   alt={item.title}
                   className="w-full xl:w-[180px] rounded-lg object-cover"
                 />

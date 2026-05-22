@@ -20,7 +20,7 @@ const Navbar = () => {
   return (
     <>
       {/* Main Navbar */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream">
+      <header className="text-brown bg-cream">
         <div className="w-full p-4 px-4 xl:px-16 flex items-center justify-between font-['Space_Grotesk']">
           {/* Brand Logo */}
           <Link
@@ -59,7 +59,7 @@ const Navbar = () => {
             <Link to="/cart" className="relative">
               <i className="ri-shopping-bag-line"></i>
 
-              <span className="absolute -top-1 -right-1 bg-orange text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-1 bg-orange text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                 {totalItems}
               </span>
             </Link>
@@ -125,6 +125,7 @@ const Navbar = () => {
               <div className="mt-auto p-4">
                 <Link
                   to="/"
+                  onClick={() => setIsOpen(false)}
                   className="w-full flex items-center justify-center bg-orange text-cream p-4 rounded-full font-bold text-lg font-['Space_Grotesk']"
                 >
                   Shop The Drop
