@@ -68,7 +68,7 @@ ${index + 1}. ${item.title}
 
       currency: "INR",
 
-      name: "Mai Bhi Cockroach",
+      name: "Main Bhi Cockroach",
 
       description:
         paymentMethod === "partial" ? "Partial Payment" : "Full Payment",
