@@ -75,7 +75,7 @@ const Thanks = () => {
           </Link>
 
           <a
-            href="https://instagram.com/maibhicockroachindia/"
+            href="https://instagram.com/cockroachjantaparty/"
             target="_blank"
             className="flex-1 border-2 border-cream/20 rounded-xl p-4 font-bold hover:bg-cream hover:text-brown transition-all duration-300 text-center"
           >

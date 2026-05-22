@@ -38,43 +38,6 @@ const Checkout = () => {
     });
   };
 
-  // Fetch City & State
-  const fetchPincodeData = async (pincode) => {
-    if (pincode.length !== 6) return;
-
-    try {
-      const res = await fetch(
-        `https://api.postalpincode.in/pincode/${pincode}`,
-      );
-
-      const data = await res.json();
-
-      if (data[0]?.Status === "Success" && data[0]?.PostOffice?.length > 0) {
-        const postOffice = data[0].PostOffice[0];
-
-        setForm((prev) => ({
-          ...prev,
-          city: postOffice.District || "",
-          state: postOffice.State || "",
-        }));
-      } else {
-        setForm((prev) => ({
-          ...prev,
-          city: "",
-          state: "",
-        }));
-      }
-    } catch (err) {
-      console.log(err);
-
-      setForm((prev) => ({
-        ...prev,
-        city: "",
-        state: "",
-      }));
-    }
-  };
-
   // Place Order
   const placeOrder = async () => {
     if (!form.name || !form.phone || !form.address || !form.pincode) {
@@ -99,7 +62,7 @@ ${index + 1}. ${item.title}
       paymentMethod === "partial" ? payableNow * 100 : totalFinalPrice * 100;
 
     const options = {
-      key: import.meta.env.VITE_RZP_TEST_KEY_ID,
+      key: import.meta.env.VITE_RZP_LIVE_KEY_ID,
 
       amount: paymentAmount,
 
@@ -269,37 +232,25 @@ ${response.razorpay_payment_id}
             />
 
             <input
-              type="text"
               name="pincode"
-              value={form.pincode}
-              maxLength={6}
               placeholder="Pincode"
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "");
-
-                setForm((prev) => ({
-                  ...prev,
-                  pincode: value,
-                }));
-
-                fetchPincodeData(value);
-              }}
+              onChange={handleChange}
               className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
             />
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               <input
-                value={form.city}
+                name="city"
                 placeholder="City"
-                readOnly
-                className="bg-cream/85 text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
+                onChange={handleChange}
+                className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
               />
 
               <input
-                value={form.state}
+                name="state"
                 placeholder="State"
-                readOnly
-                className="bg-cream/85 text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
+                onChange={handleChange}
+                className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
               />
             </div>
           </div>
