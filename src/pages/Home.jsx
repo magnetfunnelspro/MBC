@@ -13,6 +13,12 @@ import "swiper/css/pagination";
 
 const products = [
   {
+    title: "Cockroaches Tee",
+    price: 399,
+    ogPrice: 599,
+    images: ["/MbcFront.webp", "/MbcBack.webp"],
+  },
+  {
     title: "Cockroach Gang Tee",
     price: 499,
     ogPrice: 1199,
@@ -33,6 +39,7 @@ const Home = () => {
   const cartTitles = cart.map((item) => item.title);
 
   const [selectedSizes, setSelectedSizes] = useState({
+    "Cockroaches Tee": "M",
     "Cockroach Gang Tee": "M",
   });
   const [addedProducts, setAddedProducts] = useState([]);
@@ -127,7 +134,7 @@ const Home = () => {
             {/* Floating Card */}
             <div className="bg-brown text-cream rounded-[2rem] p-5 w-full max-w-[380px] 2xl:max-w-[440px] shadow-2xl rotate-[-4deg] hover:rotate-0 transition-all duration-500">
               <img
-                src="/Tee.png"
+                src="/TeeFront.webp"
                 alt="Cockroach Tee"
                 className="rounded-[1.5rem] w-full object-cover"
               />
