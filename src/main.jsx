@@ -4,6 +4,8 @@ import "./index.css";
 import AppRouter from "./Router.jsx";
 import "remixicon/fonts/remixicon.css";
 import { CartProvider } from "./context/CartContext.jsx";
+import { initMetaPixel } from "./utils/metaPixel";
+initMetaPixel();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

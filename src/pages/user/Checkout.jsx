@@ -1,6 +1,12 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { useEffect } from "react";
+import { Helmet } from "react-helmet";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { trackPurchase } from "../../utils/metaPixel";
+import { trackInitiateCheckout } from "../../utils/metaPixel";
 
 const Checkout = () => {
   const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN;
@@ -20,6 +26,10 @@ const Checkout = () => {
     city: "",
     state: "",
   });
+
+  useEffect(() => {
+    trackInitiateCheckout(finalTotal);
+  }, []);
 
   // COD Charges
   const codCharges = paymentMethod === "partial" ? 50 : 0;
@@ -79,54 +89,34 @@ ${index + 1}. ${item.title}
         try {
           const telegramMessage = `
 🪳 NEW ORDER RECEIVED
-
 ━━━━━━━━━━━━━━━
-
 👤 CUSTOMER DETAILS
-
 Name: ${form.name}
 Phone: ${form.phone}
-
 ━━━━━━━━━━━━━━━
-
 📍 SHIPPING ADDRESS
-
 ${form.address}
 Pincode: ${form.pincode}
 City: ${form.city}
 State: ${form.state}
-
 ━━━━━━━━━━━━━━━
-
 🛒 ORDER ITEMS
-
 ${orderItems}
-
 ━━━━━━━━━━━━━━━
-
 💳 PAYMENT DETAILS
-
 Payment Method:
 ${paymentMethod === "partial" ? "PARTIAL COD" : "FULL PAYMENT"}
-
 Paid Now:
 ₹${paymentMethod === "partial" ? payableNow : totalFinalPrice}
-
 Remaining COD:
 ₹${paymentMethod === "partial" ? remainingAmount : 0}
-
 ━━━━━━━━━━━━━━━
-
 💰 ORDER SUMMARY
-
 Subtotal: ₹${totalPrice}
 Shipping: ₹${shipping}
 Final Total: ₹${totalFinalPrice}
-
 ━━━━━━━━━━━━━━━
-
 🧾 RAZORPAY DETAILS
-
 Payment ID:
 ${response.razorpay_payment_id}
 `;
@@ -181,238 +171,256 @@ ${response.razorpay_payment_id}
   const totalFinalPrice = finalTotal + codCharges;
 
   return (
-    <div className="min-h-screen bg-cream text-brown font-['Space_Grotesk'] p-8 px-4 xl:px-16">
-      {/* Heading */}
-      <div className="mb-8 flex flex-col gap-2">
-        <h2 className="flex gap-2 text-5xl xl:text-7xl font-black font-['Englebert'] leading-none">
+    <>
+      <Helmet>
+        <title>Checkout | Main Bhi Cockroach</title>
+
+        <meta
+          name="description"
+          content="Complete your order for viral classic meme t-shirts inspired by internet culture and Gen-Z chaos."
+        />
+
+        <meta property="og:title" content="Checkout | Main Bhi Cockroach" />
+
+        <meta
+          property="og:description"
+          content="Finalize your order and join the cockroach survival movement."
+        />
+
+        <meta property="og:image" content="/Logo.png" />
+
+        <meta property="og:type" content="website" />
+      </Helmet>
+
+      <div className="min-h-screen bg-cream text-brown font-['Space_Grotesk'] p-8 px-4 xl:px-16">
+        {/* Heading */}
+        <h2 className="mb-8 flex gap-2 text-5xl xl:text-7xl font-black font-['Englebert'] leading-none">
           <span className="text-orange">Shipping</span>
           <span>Details</span>
         </h2>
 
-        <p className="opacity-80 text-lg">
-          Final step before joining the movement.
-        </p>
-      </div>
+        <div className="grid xl:grid-cols-[1fr_420px] gap-8 items-start">
+          {/* LEFT SECTION */}
+          <div className="flex flex-col gap-8">
+            {/* Shipping Details */}
+            <div className="bg-brown text-cream rounded-2xl p-6 xl:p-8 flex flex-col gap-5">
+              <div>
+                <h4 className="text-4xl font-black font-['Englebert']">
+                  Delivery Address
+                </h4>
 
-      <div className="grid xl:grid-cols-[1fr_420px] gap-8 items-start">
-        {/* LEFT SECTION */}
-        <div className="flex flex-col gap-8">
-          {/* Shipping Details */}
-          <div className="bg-brown text-cream rounded-2xl p-6 xl:p-8 flex flex-col gap-5">
-            <div>
-              <h4 className="text-4xl font-black font-['Englebert']">
-                Delivery Address
-              </h4>
+                <p className="opacity-80 mt-2">
+                  The cockroaches are preparing your order.
+                </p>
+              </div>
 
-              <p className="opacity-80 mt-2">
-                The cockroaches are preparing your order.
-              </p>
-            </div>
-
-            <input
-              name="name"
-              placeholder="Full Name"
-              onChange={handleChange}
-              className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
-            />
-
-            <input
-              name="phone"
-              placeholder="Phone Number"
-              onChange={handleChange}
-              className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
-            />
-
-            <textarea
-              name="address"
-              placeholder="Full Address"
-              rows="3"
-              onChange={handleChange}
-              className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none resize-none"
-            />
-
-            <input
-              name="pincode"
-              placeholder="Pincode"
-              onChange={handleChange}
-              className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
-            />
-
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               <input
-                name="city"
-                placeholder="City"
+                name="name"
+                placeholder="Full Name"
                 onChange={handleChange}
                 className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
               />
 
               <input
-                name="state"
-                placeholder="State"
+                name="phone"
+                placeholder="Phone Number"
                 onChange={handleChange}
                 className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
               />
-            </div>
-          </div>
 
-          {/* Payment Method */}
-          <div className="bg-brown text-cream rounded-2xl p-6 xl:p-8 flex flex-col gap-5">
-            <div>
-              <h4 className="text-4xl font-black font-['Englebert']">
-                Payment Method
-              </h4>
+              <textarea
+                name="address"
+                placeholder="Full Address"
+                rows="3"
+                onChange={handleChange}
+                className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none resize-none"
+              />
 
-              <p className="opacity-80 mt-2">Choose your survival strategy.</p>
-            </div>
+              <input
+                name="pincode"
+                placeholder="Pincode"
+                onChange={handleChange}
+                className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
+              />
 
-            {/* Partial Payment */}
-            <button
-              onClick={() => setPaymentMethod("partial")}
-              className={`rounded-2xl p-5 flex items-start justify-between transition-all duration-300 border-2 ${
-                paymentMethod === "partial"
-                  ? "bg-orange border-orange"
-                  : "bg-cream/10 border-cream/10"
-              }`}
-            >
-              <div className="flex flex-col gap-1 text-left">
-                <span className="text-xl font-bold">Pay ₹100 Now</span>
-
-                <span className="opacity-80 text-sm leading-relaxed">
-                  ₹50 COD charges applied. Remaining amount & COD charges after
-                  delivery.
-                </span>
-              </div>
-
-              <i className="ri-shield-check-line text-2xl"></i>
-            </button>
-
-            {/* Full Payment */}
-            <button
-              onClick={() => setPaymentMethod("full")}
-              className={`rounded-2xl p-5 flex items-start justify-between transition-all duration-300 border-2 ${
-                paymentMethod === "full"
-                  ? "bg-orange border-orange"
-                  : "bg-cream/10 border-cream/10"
-              }`}
-            >
-              <div className="flex flex-col gap-1 text-left">
-                <span className="text-xl font-bold">Pay Full Amount</span>
-
-                <span className="opacity-80 text-sm leading-relaxed">
-                  Secure online payment via Razorpay.
-                </span>
-              </div>
-
-              <i className="ri-bank-card-line text-2xl"></i>
-            </button>
-          </div>
-        </div>
-
-        {/* RIGHT SECTION */}
-        <div className="bg-brown text-cream rounded-2xl p-6 xl:p-8 h-fit sticky top-28 flex flex-col gap-6">
-          <div>
-            <h4 className="text-4xl font-black font-['Englebert']">
-              Order Summary
-            </h4>
-
-            <p className="opacity-80 mt-2">Your official survival kit.</p>
-          </div>
-
-          {/* Cart Items */}
-          <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto pr-1">
-            {cart.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-4 bg-cream/10 rounded-xl p-3"
-              >
-                <img
-                  src={item.images?.[0]}
-                  alt={item.title}
-                  className="w-20 rounded-lg object-cover"
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <input
+                  name="city"
+                  placeholder="City"
+                  onChange={handleChange}
+                  className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
                 />
 
-                <div className="flex flex-col flex-1">
-                  <h4 className="font-bold text-lg leading-none">
-                    {item.title}
-                  </h4>
-
-                  <p className="opacity-80 text-sm mt-2">Size: {item.size}</p>
-
-                  <span className="font-bold mt-1">₹{item.price}</span>
-                </div>
+                <input
+                  name="state"
+                  placeholder="State"
+                  onChange={handleChange}
+                  className="bg-cream text-brown placeholder:text-brown/80 rounded-xl p-4 outline-none"
+                />
               </div>
-            ))}
+            </div>
+
+            {/* Payment Method */}
+            <div className="bg-brown text-cream rounded-2xl p-6 xl:p-8 flex flex-col gap-5">
+              <div>
+                <h4 className="text-4xl font-black font-['Englebert']">
+                  Payment Method
+                </h4>
+
+                <p className="opacity-80 mt-2">
+                  Choose your survival strategy.
+                </p>
+              </div>
+
+              {/* Partial Payment */}
+              <button
+                onClick={() => setPaymentMethod("partial")}
+                className={`rounded-2xl p-5 flex items-start justify-between transition-all duration-300 border-2 ${
+                  paymentMethod === "partial"
+                    ? "bg-orange border-orange"
+                    : "bg-cream/10 border-cream/10"
+                }`}
+              >
+                <div className="flex flex-col gap-1 text-left">
+                  <span className="text-xl font-bold">Pay ₹100 Now</span>
+
+                  <span className="opacity-80 text-sm leading-relaxed">
+                    ₹50 COD charges applied. Remaining amount & COD charges
+                    after delivery.
+                  </span>
+                </div>
+
+                <i className="ri-shield-check-line text-2xl"></i>
+              </button>
+
+              {/* Full Payment */}
+              <button
+                onClick={() => setPaymentMethod("full")}
+                className={`rounded-2xl p-5 flex items-start justify-between transition-all duration-300 border-2 ${
+                  paymentMethod === "full"
+                    ? "bg-orange border-orange"
+                    : "bg-cream/10 border-cream/10"
+                }`}
+              >
+                <div className="flex flex-col gap-1 text-left">
+                  <span className="text-xl font-bold">Pay Full Amount</span>
+
+                  <span className="opacity-80 text-sm leading-relaxed">
+                    Secure online payment via Razorpay.
+                  </span>
+                </div>
+
+                <i className="ri-bank-card-line text-2xl"></i>
+              </button>
+            </div>
           </div>
 
-          {/* Pricing */}
-          <div className="flex flex-col gap-4 border-t border-cream/10 pt-4">
-            <div className="flex items-center justify-between">
-              <span>Subtotal</span>
-              <span>₹{totalPrice}</span>
+          {/* RIGHT SECTION */}
+          <div className="bg-brown text-cream rounded-2xl p-6 xl:p-8 h-fit sticky top-28 flex flex-col gap-6">
+            <div>
+              <h4 className="text-4xl font-black font-['Englebert']">
+                Order Summary
+              </h4>
+
+              <p className="opacity-80 mt-2">Your official survival kit.</p>
             </div>
 
-            <div className="flex items-center justify-between">
-              <span>Shipping</span>
-              <span>₹{shipping}</span>
+            {/* Cart Items */}
+            <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto pr-1">
+              {cart.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-4 bg-cream/10 rounded-xl p-3"
+                >
+                  <img
+                    src={item.images?.[0]}
+                    alt={item.title}
+                    className="w-20 rounded-lg object-cover"
+                  />
+
+                  <div className="flex flex-col flex-1">
+                    <h4 className="font-bold text-lg leading-none">
+                      {item.title}
+                    </h4>
+
+                    <p className="opacity-80 text-sm mt-2">Size: {item.size}</p>
+
+                    <span className="font-bold mt-1">₹{item.price}</span>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {paymentMethod === "partial" && (
+            {/* Pricing */}
+            <div className="flex flex-col gap-4 border-t border-cream/10 pt-4">
               <div className="flex items-center justify-between">
-                <span>COD Charges</span>
-                <span>₹50</span>
+                <span>Subtotal</span>
+                <span>₹{totalPrice}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span>Shipping</span>
+                <span>₹{shipping}</span>
+              </div>
+
+              {paymentMethod === "partial" && (
+                <div className="flex items-center justify-between">
+                  <span>COD Charges</span>
+                  <span>₹50</span>
+                </div>
+              )}
+
+              <div className="w-full h-[1px] bg-cream/10"></div>
+
+              <div className="flex items-center justify-between text-2xl font-black">
+                <span>Total</span>
+                <span>₹{totalFinalPrice}</span>
+              </div>
+            </div>
+
+            {/* Partial Payment Info */}
+            {paymentMethod === "partial" && (
+              <div className="bg-orange/10 border border-orange rounded-xl p-4 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span>Pay Now</span>
+
+                  <span className="font-bold">₹{payableNow}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span>After Delivery</span>
+
+                  <span className="font-bold">₹{remainingAmount}</span>
+                </div>
               </div>
             )}
 
-            <div className="w-full h-[1px] bg-cream/10"></div>
+            {/* CTA */}
+            <button
+              onClick={placeOrder}
+              className="w-full bg-orange text-cream rounded-xl p-4 font-bold text-lg hover:scale-[1.02] transition-all duration-300"
+            >
+              {paymentMethod === "partial"
+                ? `Pay ₹${payableNow} Now`
+                : `Pay ₹${finalTotal}`}
+            </button>
 
-            <div className="flex items-center justify-between text-2xl font-black">
-              <span>Total</span>
-              <span>₹{totalFinalPrice}</span>
-            </div>
+            {/* Back */}
+            <Link
+              to="/cart"
+              className="w-full border-2 border-cream/10 rounded-xl p-4 text-center font-semibold hover:bg-cream hover:text-brown transition-all duration-300"
+            >
+              Return To Cart
+            </Link>
+
+            <p className="text-center text-sm opacity-60 leading-relaxed">
+              By placing this order, you agree to join the unofficial cockroach
+              survival movement.
+            </p>
           </div>
-
-          {/* Partial Payment Info */}
-          {paymentMethod === "partial" && (
-            <div className="bg-orange/10 border border-orange rounded-xl p-4 flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span>Pay Now</span>
-
-                <span className="font-bold">₹{payableNow}</span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span>After Delivery</span>
-
-                <span className="font-bold">₹{remainingAmount}</span>
-              </div>
-            </div>
-          )}
-
-          {/* CTA */}
-          <button
-            onClick={placeOrder}
-            className="w-full bg-orange text-cream rounded-xl p-4 font-bold text-lg hover:scale-[1.02] transition-all duration-300"
-          >
-            {paymentMethod === "partial"
-              ? `Pay ₹${payableNow} Now`
-              : `Pay ₹${finalTotal}`}
-          </button>
-
-          {/* Back */}
-          <Link
-            to="/cart"
-            className="w-full border-2 border-cream/10 rounded-xl p-4 text-center font-semibold hover:bg-cream hover:text-brown transition-all duration-300"
-          >
-            Return To Cart
-          </Link>
-
-          <p className="text-center text-sm opacity-60 leading-relaxed">
-            By placing this order, you agree to join the unofficial cockroach
-            survival movement.
-          </p>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -8,6 +8,7 @@ import { Pagination } from "swiper/modules";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { trackAddToCart } from "../utils/metaPixel";  
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -132,7 +133,7 @@ const Home = () => {
           {/* RIGHT SIDE */}
           <div className="hidden xl:flex justify-center items-center relative flex-shrink-0">
             {/* Floating Card */}
-            <div className="bg-brown text-cream rounded-[2rem] p-5 w-full max-w-[380px] 2xl:max-w-[440px] shadow-2xl rotate-[-4deg] hover:rotate-0 transition-all duration-500">
+            <div className="bg-brown text-cream rounded-[2rem] p-4 w-full max-w-[380px] 2xl:max-w-[440px] shadow-2xl rotate-[-4deg] hover:rotate-0 transition-all duration-500">
               <img
                 src="/TeeFront.webp"
                 alt="Cockroach Tee"
@@ -141,22 +142,32 @@ const Home = () => {
 
               <div className="pt-6 flex flex-col gap-4">
                 <div>
-                  <h3 className="text-4xl font-black font-['Englebert']">
+                  <h4 className="text-4xl font-black font-['Englebert']">
                     Cockroach Gang Tee
-                  </h3>
+                  </h4>
 
-                  <p className="opacity-70 mt-2 leading-relaxed">
+                  <p className="opacity-80 mt-2 leading-relaxed">
                     Built for survivors of Indian internet chaos.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <span className="text-3xl font-black">₹499</span>
 
-                  <span className="line-through opacity-50 text-lg">₹1199</span>
+                  <span className="line-through opacity-80 text-lg">₹1199</span>
                 </div>
 
-                <button className="bg-orange text-cream rounded-xl p-4 font-semibold text-lg hover:scale-[1.02] transition-all duration-300">
+                <button
+                  onClick={() => {
+                    trackAddToCart();
+
+                    addToCart({
+                      ...product,
+                      size: selectedSizes[product.title] || "M",
+                    });
+                  }}
+                  className="bg-orange text-cream rounded-xl p-4 font-semibold text-lg hover:scale-[1.02] transition-all duration-200"
+                >
                   Add To Cart
                 </button>
               </div>
@@ -275,12 +286,14 @@ const Home = () => {
                   </button>
                 ) : (
                   <button
-                    onClick={() =>
+                    onClick={() => {
+                      trackAddToCart(product);
+
                       addToCart({
                         ...product,
                         size: selectedSizes[product.title] || "M",
-                      })
-                    }
+                      });
+                    }}
                     className="bg-orange text-cream rounded-lg p-4 font-semibold active:scale-[1.02] transition-all duration-200"
                   >
                     Add To Cart
